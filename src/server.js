@@ -23,7 +23,7 @@ app.use((error, request, response, next) => {
     status: "error",
     message: "Internal server error"
   });
-})
+});
 
 const PORT = 3333;
 app.listen(PORT, () => console.log(`Server is running on Port ${PORT}`));

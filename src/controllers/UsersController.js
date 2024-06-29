@@ -1,22 +1,27 @@
 const AppError = require("../utils/AppError");
-
-/**
- * index - GET para listar vários registros.
- * show - GET para exibir um registro específico.
- * create - POST para criar um registro.
- * update - PUT para atualizar um registro.
- * delete - DELETE para remover um registro.
- */
+const sqliteConnection = require("../database/sqlite");
 
 class UsersController {
-  create(request, response) {
+  async create(request, response) {
     const { name, email, password } = request.body;
+    const database = await sqliteConnection();
 
-    if(!name) {
-      throw new AppError("Nome é obrigatório")
-    }
+    const checkUserExists = await database.get(`
+      SELECT * from users
+      WHERE email = (?)
+    `, [email]);
     
-    response.status(201).json({ name, email, password });
+    if(checkUserExists) {
+      throw new AppError("Este e-mail já está em uso.")
+    }
+
+    await database.run(`
+      INSERT INTO users 
+      (name, email, password)
+      VALUES (?, ?, ?)
+    `, [name, email, password]);
+
+    response.status(201).json();
   }
 }
 
