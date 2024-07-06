@@ -24,7 +24,7 @@ class UsersController {
       VALUES (?, ?, ?)
     `, [name, email, hashedPassword]);
 
-    response.status(201).json();
+    return response.status(201).json();
   }
   async update(request, response) {
     const { name, email, password, old_password } = request.body;
